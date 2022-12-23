@@ -5,7 +5,8 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "json-server": "json-server-auth db.json"
   },
   "private": true,
   "dependencies": {
@@ -47,6 +48,8 @@
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "jest-preset-angular": "~12.2.3",
+    "json-server": "^0.17.1",
+    "json-server-auth": "^2.1.0",
     "nx": "15.4.1",
     "prettier": "^2.6.2",
     "ts-jest": "28.0.5",
