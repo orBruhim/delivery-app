@@ -1,19 +1,29 @@
 {
-  "posts": [
+  "users": [
     {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
+      "email": "lalal@gmail.com",
+      "password": "$2a$10$ObVT.wguse4l1c/MznGCWOg08rZyJvpRG8MXpoWeqmWA.7kyc1Udq",
+      "id": 1
+    },
     {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "email": "orfffdddddbhjbjNewdOne@gmail.com",
+      "password": "$2a$10$AIbu4i0/iX2VSMcOjeiOgONhhkP4WJlZo37jB8GS431jBVusLs47.",
+      "id": 2
+    },
+    {
+      "email": "orfffdddddbffhjbjNewdOne@gmail.com",
+      "password": "$2a$10$N5hwY9SaC60d1CK/vLAyeuuH7h20SEtwLhNVu514QuZHAu14d.aya",
+      "id": 3
+    },
+    {
+      "email": "orfffdddddbfffffhjbjNewdOne@gmail.com",
+      "password": "$2a$10$dvr2HqqdOsuPcwytAo9fAeJOz5SsWPZmmTFajRwUyxqsrW9i8H7L2",
+      "id": 4
+    },
+    {
+      "email": "orfffddfddddbhjbjNewdOne@gmail.com",
+      "password": "$2a$10$bBp9MzY6DKfPzSFXhXQurO74IZZKDYlAZwyqbNDl/XxrlRSsOGoj.",
+      "id": 5
     }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
