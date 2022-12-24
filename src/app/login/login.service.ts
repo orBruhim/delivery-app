@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest, LoginResponse } from './login.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class LoginService {
     return this.userSubject.asObservable();
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     const { email, password } = loginRequest;
     return this.http
@@ -23,6 +24,7 @@ export class LoginService {
       })
       .pipe(
         tap((user) => {
+          user && this.router.navigate(['/create']);
           this.userSubject.next(user);
         })
       );
@@ -38,6 +40,8 @@ export class LoginService {
       })
       .pipe(
         tap((user) => {
+          user && this.router.navigate(['/create']);
+
           this.userSubject.next(user);
         })
       );
