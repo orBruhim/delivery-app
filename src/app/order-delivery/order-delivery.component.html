@@ -44,6 +44,23 @@
           <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="receiverPhoneNumber">
         </mat-form-field>
       </div>
+      <div class="form-field-wrapper">
+        <mat-form-field appearance="fill">
+          <mat-label>Choose delivery date</mat-label>
+          <input matInput [matDatepickerFilter]="datesFilter" [matDatepicker]="picker" (dateChange)="onDateSelected( $event)">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label> Hours for delivery</mat-label>
+          <mat-select >
+            <mat-option *ngFor="let hour of hours" [value]="hour">
+              {{hour}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </form>
 
   </div>

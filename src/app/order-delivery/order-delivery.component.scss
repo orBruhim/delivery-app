@@ -17,6 +17,11 @@ height: 100%;
   .form-field-wrapper{
     display: flex;
     gap: 12px;
+
+    mat-form-field {
+      min-width: 248px;
+
+    }
   }
   .mat-mdc-text-field-wrapper {
     border-radius: 6px;
