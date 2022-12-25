@@ -49,7 +49,12 @@ export class OrderDeliveryComponent implements OnDestroy {
     if (!date) {
       return false;
     }
-    return !this.holidayDays.includes(date?.toString().slice(0, 3));
+    const currentDate = new Date();
+
+    return (
+      !this.holidayDays.includes(date?.toString().slice(0, 3)) &&
+      date > currentDate
+    );
   };
 
   onDateSelected(event: MatDatepickerInputEvent<Date>) {
