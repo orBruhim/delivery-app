@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { LoginRequest, LoginResponse } from './login.model';
+import { LoginRequest, LoginResponse } from '../login.model';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -45,5 +45,10 @@ export class LoginService {
           this.userSubject.next(user);
         })
       );
+  }
+
+  logout(): void {
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
   }
 }

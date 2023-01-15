@@ -1,1 +1,5 @@
+<div *ngIf="isLoggedIn$ | async" class=" logout-wrapper">
+  <button mat-raised-button  color="primary" (click)="logout()">Logout </button>
+</div>
+
 <router-outlet></router-outlet>
