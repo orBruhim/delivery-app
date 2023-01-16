@@ -6,9 +6,4 @@ export const login = createAction(
   props<{ user: LoginRequest }>()
 );
 
-export const signup = createAction(
-  '[Login page] user signup',
-  props<{ user: LoginRequest }>()
-);
-
 export const logout = createAction('[login page] user logout');

@@ -47,25 +47,4 @@ export class LoginComponent implements OnInit {
       )
       .subscribe();
   }
-
-  signUp(): void {
-    const { email, password } = this.loginForm.value;
-
-    if (!(email && password)) {
-      return;
-    }
-    const user: LoginRequest = {
-      email,
-      password,
-    };
-
-    this.loginService
-      .signUp({ email, password })
-      .pipe(
-        tap(() => {
-          this.store.dispatch(login({ user }));
-        })
-      )
-      .subscribe();
-  }
 }
