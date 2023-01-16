@@ -5,6 +5,8 @@ import { Store } from '@ngrx/store';
 import { login } from './store/login.actions';
 import { LoginRequest } from './login.model';
 import { tap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'delivery-app-login',
@@ -18,7 +20,12 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', Validators.required),
   });
 
-  constructor(private loginService: LoginService, private store: Store) {}
+  constructor(
+    private loginService: LoginService,
+    private store: Store,
+    private _snackBar: MatSnackBar,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const user = localStorage.getItem('user');
@@ -41,10 +48,21 @@ export class LoginComponent implements OnInit {
     this.loginService
       .login({ email, password })
       .pipe(
-        tap(() => {
+        tap((loginResponse) => {
+          if (!loginResponse.token) {
+            this.showPasswordErrorToast();
+            return;
+          }
+          this.router.navigate(['/create']);
           this.store.dispatch(login({ user }));
         })
       )
       .subscribe();
+  }
+
+  private showPasswordErrorToast(): void {
+    this._snackBar.open('Your password is incorrect', '', {
+      duration: 1500,
+    });
   }
 }

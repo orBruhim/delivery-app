@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { loginReducer } from './store/login.reducer';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -20,6 +21,7 @@ import { loginReducer } from './store/login.reducer';
     MatButtonModule,
     HttpClientModule,
     StoreModule.forFeature('login', loginReducer),
+    MatSnackBarModule,
   ],
 })
 export class LoginModule {}
