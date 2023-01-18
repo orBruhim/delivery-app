@@ -1,67 +1,92 @@
 <div class="page-wrapper">
-  <div class="title-wrapper">
-    <h2> Order Delivery </h2>
+  <div class="order-wrapper">
+    <div class="title-wrapper">
+      <h2> Order Delivery </h2>
+    </div>
+    <div class="form-wrapper">
+      <form [formGroup]="deliveryForm">
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label> Name</mat-label>
+            <input matInput formControlName="name">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Phone number</mat-label>
+            <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="phoneNumber">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Pickup Address</mat-label>
+            <textarea matInput placeholder="Ex. 100 Main St" formControlName="address"></textarea>
+          </mat-form-field>
+          <mat-form-field *ngIf="citiesList$ | async as citiesList">
+            <mat-label> Pickup Cities List</mat-label>
+            <mat-select formControlName="dropOffCityList" (selectionChange)="dropOffCityChanged($event.value)">
+              <mat-option *ngFor="let city of citiesList " [value]="city">
+                {{city.enName | titlecase}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Drop-off Address</mat-label>
+            <textarea formControlName="dropOffAddress" matInput></textarea>
+          </mat-form-field>
+          <mat-form-field *ngIf="citiesList$ | async as citiesList">
+            <mat-label>Drop-off Cities List</mat-label>
+            <mat-select (selectionChange)="cityChanged($event.value)" formControlName="cityList">
+              <mat-option *ngFor="let city of citiesList " [value]="city">
+                {{city.enName | titlecase}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label> Receiver Name</mat-label>
+            <input matInput formControlName="receiverName">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Receiver phone number</mat-label>
+            <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="receiverPhoneNumber">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field appearance="fill">
+            <mat-label>Choose delivery date</mat-label>
+            <input matInput [matDatepickerFilter]="datesFilter" [matDatepicker]="picker"
+                   (dateChange)="onDateSelected( $event)">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label> Hours for delivery</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let hour of hours" [value]="hour">
+                {{hour}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+
+    </div>
   </div>
-  <div class="form-wrapper">
-    <form [formGroup]="deliveryForm">
-      <div class="form-field-wrapper">
-        <mat-form-field>
-          <mat-label> Name</mat-label>
-          <input matInput formControlName="name">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Phone number</mat-label>
-          <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="phoneNumber">
-        </mat-form-field>
-      </div>
-      <div class="form-field-wrapper">
-        <mat-form-field>
-          <mat-label>Address</mat-label>
-          <textarea matInput placeholder="Ex. 100 Main St" formControlName="address"></textarea>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>TODO: City List</mat-label>
-          <textarea matInput placeholder="Ex. 100 Main St" formControlName="cityList"></textarea>
-        </mat-form-field>
-      </div>
-      <div class="form-field-wrapper">
-        <mat-form-field>
-          <mat-label>Drop-off address</mat-label>
-          <textarea formControlName="dropOffAddress" matInput></textarea>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>TODO: City List</mat-label>
-          <textarea matInput placeholder="Ex. 100 Main St" formControlName="dropOffCityList"></textarea>
-        </mat-form-field>
-      </div>
-      <div class="form-field-wrapper">
-        <mat-form-field>
-          <mat-label> Receiver Name</mat-label>
-          <input matInput formControlName="receiverName">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Receiver phone number</mat-label>
-          <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="receiverPhoneNumber">
-        </mat-form-field>
-      </div>
-      <div class="form-field-wrapper">
-        <mat-form-field appearance="fill">
-          <mat-label>Choose delivery date</mat-label>
-          <input matInput [matDatepickerFilter]="datesFilter" [matDatepicker]="picker" (dateChange)="onDateSelected( $event)">
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-          <mat-label> Hours for delivery</mat-label>
-          <mat-select >
-            <mat-option *ngFor="let hour of hours" [value]="hour">
-              {{hour}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </form>
-
+  <div class="payment-wrapper">
+    <div class="payment-title">Sub Total:
+      <div>{{subTotal | currency}}</div>
+    </div>
+    <div class="payment-title"> Vat:
+    <div>
+      {{(0.17 * subTotal).toFixed(2) | currency}}
+    </div>
+    </div>
+    <div class="payment-title total-price"> Total Price:
+    <div> {{(1.17 * subTotal).toFixed(2) | currency}}</div>
+    </div>
+    <button mat-raised-button color="primary" (click)="submit()">Pay</button>
   </div>
 </div>

@@ -8,6 +8,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OrderDeliveryService } from './order-delivery.service';
 import { Subject, takeUntil, tap } from 'rxjs';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { OrderDeliveryCity } from './order-delivery.model';
 
 @Component({
   selector: 'delivery-app-order-delivery',
@@ -16,6 +17,7 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderDeliveryComponent implements OnDestroy {
+  citiesList$ = this.orderDeliveryService.getCities();
   deliveryForm = new FormGroup({
     name: new FormControl(),
     phoneNumber: new FormControl(
@@ -36,6 +38,9 @@ export class OrderDeliveryComponent implements OnDestroy {
   hours: string[] = [];
   selectedDay = '';
   holidayDays: string[] = [];
+  subTotal = 0;
+  dropOffCityPrice = '';
+  cityPrice = '';
 
   private destroySubject = new Subject<void>();
 
@@ -43,6 +48,10 @@ export class OrderDeliveryComponent implements OnDestroy {
     private orderDeliveryService: OrderDeliveryService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
+
+  ngOnDestroy(): void {
+    this.destroySubject.next();
+  }
 
   datesFilter = (date: Date | null): boolean => {
     this.getTimesForDatePicker();
@@ -57,12 +66,8 @@ export class OrderDeliveryComponent implements OnDestroy {
     );
   };
 
-  onDateSelected(event: MatDatepickerInputEvent<Date>) {
+  onDateSelected(event: MatDatepickerInputEvent<Date>): void {
     this.selectedDay = event.value?.toString().slice(0, 3) || '';
-  }
-
-  ngOnDestroy(): void {
-    this.destroySubject.next();
   }
 
   private getTimesForDatePicker(): void {
@@ -84,5 +89,27 @@ export class OrderDeliveryComponent implements OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  submit(): void {
+    console.log(this.deliveryForm.value);
+  }
+
+  dropOffCityChanged(value: OrderDeliveryCity): void {
+    this.dropOffCityPrice = value.price;
+    if (this.dropOffCityPrice === this.cityPrice) {
+      this.subTotal = +this.dropOffCityPrice;
+    } else {
+      this.subTotal = +(this.dropOffCityPrice + this.cityPrice + 10);
+    }
+  }
+
+  cityChanged(value: OrderDeliveryCity): void {
+    this.cityPrice = value.price;
+    if (this.dropOffCityPrice === this.cityPrice) {
+      this.subTotal = +this.cityPrice;
+    } else {
+      this.subTotal = +(this.dropOffCityPrice + this.cityPrice + 10);
+    }
   }
 }

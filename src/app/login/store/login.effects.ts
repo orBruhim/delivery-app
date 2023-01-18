@@ -13,8 +13,8 @@ export class LoginEffectsService {
       this.actions$.pipe(
         ofType(login),
         tap((action) => {
-          this.router.navigate(['/create']);
           localStorage.setItem('user', JSON.stringify(action.user));
+          this.router.navigate(['/create']);
         })
       ),
     { dispatch: false }

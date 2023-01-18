@@ -4,7 +4,11 @@ import { OrderDeliveryComponent } from './order-delivery.component';
 import { LoginGuard } from '../login/login.guard';
 
 const routes: Routes = [
-  { path: '', component: OrderDeliveryComponent, canActivate: [LoginGuard] },
+  {
+    path: '',
+    component: OrderDeliveryComponent,
+    // canActivate: [LoginGuard]
+  },
 ];
 
 @NgModule({
