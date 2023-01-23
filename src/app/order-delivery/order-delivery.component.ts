@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OrderDeliveryService } from './order-delivery.service';
@@ -11,6 +12,8 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { OrderDeliveryCity } from './order-delivery.model';
 import { Store } from '@ngrx/store';
 import { token } from '../login/store/login.selector';
+import { Loader } from '@googlemaps/js-api-loader';
+import { getMapOptions } from './order-delivery.const';
 
 @Component({
   selector: 'delivery-app-order-delivery',
@@ -18,7 +21,7 @@ import { token } from '../login/store/login.selector';
   styleUrls: ['./order-delivery.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderDeliveryComponent implements OnDestroy {
+export class OrderDeliveryComponent implements OnDestroy, OnInit {
   citiesList$ = this.orderDeliveryService.getCities();
   deliveryForm = new FormGroup({
     name: new FormControl(),
@@ -45,6 +48,8 @@ export class OrderDeliveryComponent implements OnDestroy {
   dropOffCityPrice = '';
   cityPrice = '';
 
+  map!: google.maps.Map;
+
   private destroySubject = new Subject<void>();
 
   constructor(
@@ -54,6 +59,10 @@ export class OrderDeliveryComponent implements OnDestroy {
   ) {}
 
   token$ = this.store.select(token);
+
+  ngOnInit() {
+    this.initMap();
+  }
 
   ngOnDestroy(): void {
     this.destroySubject.next();
@@ -130,5 +139,19 @@ export class OrderDeliveryComponent implements OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  private initMap(): void {
+    const loader = new Loader({
+      apiKey: 'AIzaSyA5DZolXRvgGAEoBLdFmyOnfm0-e22ZErE',
+      version: 'weekly',
+    });
+
+    loader.load().then(() => {
+      this.map = new google.maps.Map(
+        document.getElementById('map') as HTMLElement,
+        getMapOptions()
+      );
+    });
   }
 }

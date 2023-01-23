@@ -75,18 +75,23 @@
 
     </div>
   </div>
-  <div class="payment-wrapper">
-    <div class="payment-title">Sub Total:
-      <div>{{subTotal | currency}}</div>
+  <div class="right-side-wrapper">
+    <div class="payment-wrapper">
+      <div class="payment-title">Sub Total:
+        <div>{{subTotal | currency}}</div>
+      </div>
+      <div class="payment-title"> Vat:
+        <div>
+          {{(0.17 * subTotal).toFixed(2) | currency}}
+        </div>
+      </div>
+      <div class="payment-title total-price"> Total Price:
+        <div> {{(1.17 * subTotal).toFixed(2) | currency}}</div>
+      </div>
+      <button mat-raised-button color="primary" (click)="submit()">Pay</button>
     </div>
-    <div class="payment-title"> Vat:
-    <div>
-      {{(0.17 * subTotal).toFixed(2) | currency}}
+    <div class="google-maps-map-wrapper">
+      <div id="map"></div>
     </div>
-    </div>
-    <div class="payment-title total-price"> Total Price:
-    <div> {{(1.17 * subTotal).toFixed(2) | currency}}</div>
-    </div>
-    <button mat-raised-button color="primary" (click)="submit()">Pay</button>
   </div>
 </div>
