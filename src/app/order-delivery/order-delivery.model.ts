@@ -12,3 +12,8 @@ export interface OrderDeliveryCity {
 export interface SubmitResponse {
   status: string;
 }
+
+export interface OrderDeliveryLocation {
+  lat: number;
+  lng: number;
+}

@@ -9,7 +9,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OrderDeliveryService } from './order-delivery.service';
 import { Subject, takeUntil, tap } from 'rxjs';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { OrderDeliveryCity } from './order-delivery.model';
+import {
+  OrderDeliveryCity,
+  OrderDeliveryLocation,
+} from './order-delivery.model';
 import { Store } from '@ngrx/store';
 import { token } from '../login/store/login.selector';
 import { Loader } from '@googlemaps/js-api-loader';
@@ -48,7 +51,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   dropOffCityPrice = '';
   cityPrice = '';
 
-  map!: google.maps.Map;
+  googleMapsMap!: google.maps.Map;
 
   private destroySubject = new Subject<void>();
 
@@ -104,6 +107,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
 
   onDropOffCityChanged(value: OrderDeliveryCity): void {
     this.dropOffCityPrice = value.price;
+    this.DisplayMarkerByCityName(value.enName);
     if (this.dropOffCityPrice === this.cityPrice) {
       this.subTotal = +this.dropOffCityPrice;
     } else {
@@ -113,6 +117,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
 
   onCityChanged(value: OrderDeliveryCity): void {
     this.cityPrice = value.price;
+    this.DisplayMarkerByCityName(value.enName);
     if (this.dropOffCityPrice === this.cityPrice) {
       this.subTotal = +this.cityPrice;
     } else {
@@ -148,10 +153,28 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     });
 
     loader.load().then(() => {
-      this.map = new google.maps.Map(
+      this.googleMapsMap = new google.maps.Map(
         document.getElementById('map') as HTMLElement,
         getMapOptions()
       );
+    });
+  }
+  private DisplayMarkerByCityName(cityName: string): void {
+    const geocoder = new google.maps.Geocoder();
+    let location: OrderDeliveryLocation;
+
+    geocoder.geocode({ address: cityName }, (results, status) => {
+      if (status !== google.maps.GeocoderStatus.OK || !results) {
+        return;
+      }
+      location = {
+        lat: results[0].geometry.location.lat(),
+        lng: results[0].geometry.location.lng(),
+      };
+      const marker = new google.maps.Marker({
+        position: location,
+      });
+      marker.setMap(this.googleMapsMap);
     });
   }
 }
