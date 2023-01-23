@@ -9,6 +9,8 @@ import { OrderDeliveryService } from './order-delivery.service';
 import { Subject, takeUntil, tap } from 'rxjs';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { OrderDeliveryCity } from './order-delivery.model';
+import { Store } from '@ngrx/store';
+import { token } from '../login/store/login.selector';
 
 @Component({
   selector: 'delivery-app-order-delivery',
@@ -37,6 +39,7 @@ export class OrderDeliveryComponent implements OnDestroy {
 
   hours: string[] = [];
   selectedDay = '';
+  selectedDate: Date | null = null;
   holidayDays: string[] = [];
   subTotal = 0;
   dropOffCityPrice = '';
@@ -46,8 +49,11 @@ export class OrderDeliveryComponent implements OnDestroy {
 
   constructor(
     private orderDeliveryService: OrderDeliveryService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private store: Store
   ) {}
+
+  token$ = this.store.select(token);
 
   ngOnDestroy(): void {
     this.destroySubject.next();
@@ -67,7 +73,42 @@ export class OrderDeliveryComponent implements OnDestroy {
   };
 
   onDateSelected(event: MatDatepickerInputEvent<Date>): void {
+    this.selectedDate = event.value;
     this.selectedDay = event.value?.toString().slice(0, 3) || '';
+  }
+
+  submit(): void {
+    this.token$
+      .pipe(
+        tap((token) => {
+          console.log(token);
+          if (!this.selectedDate || !token) {
+            return;
+          }
+          this.orderDeliveryService
+            .submitForm(this.selectedDate, token)
+            .subscribe((data) => console.log(data));
+        })
+      )
+      .subscribe();
+  }
+
+  onDropOffCityChanged(value: OrderDeliveryCity): void {
+    this.dropOffCityPrice = value.price;
+    if (this.dropOffCityPrice === this.cityPrice) {
+      this.subTotal = +this.dropOffCityPrice;
+    } else {
+      this.subTotal = +(+(this.dropOffCityPrice + this.cityPrice) + 10);
+    }
+  }
+
+  onCityChanged(value: OrderDeliveryCity): void {
+    this.cityPrice = value.price;
+    if (this.dropOffCityPrice === this.cityPrice) {
+      this.subTotal = +this.cityPrice;
+    } else {
+      this.subTotal = +(+(this.dropOffCityPrice + this.cityPrice) + 10);
+    }
   }
 
   private getTimesForDatePicker(): void {
@@ -89,27 +130,5 @@ export class OrderDeliveryComponent implements OnDestroy {
         })
       )
       .subscribe();
-  }
-
-  submit(): void {
-    console.log(this.deliveryForm.value);
-  }
-
-  dropOffCityChanged(value: OrderDeliveryCity): void {
-    this.dropOffCityPrice = value.price;
-    if (this.dropOffCityPrice === this.cityPrice) {
-      this.subTotal = +this.dropOffCityPrice;
-    } else {
-      this.subTotal = +(this.dropOffCityPrice + this.cityPrice + 10);
-    }
-  }
-
-  cityChanged(value: OrderDeliveryCity): void {
-    this.cityPrice = value.price;
-    if (this.dropOffCityPrice === this.cityPrice) {
-      this.subTotal = +this.cityPrice;
-    } else {
-      this.subTotal = +(this.dropOffCityPrice + this.cityPrice + 10);
-    }
   }
 }

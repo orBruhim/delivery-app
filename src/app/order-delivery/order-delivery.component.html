@@ -22,7 +22,7 @@
           </mat-form-field>
           <mat-form-field *ngIf="citiesList$ | async as citiesList">
             <mat-label> Pickup Cities List</mat-label>
-            <mat-select formControlName="dropOffCityList" (selectionChange)="dropOffCityChanged($event.value)">
+            <mat-select formControlName="dropOffCityList" (selectionChange)="onDropOffCityChanged($event.value)">
               <mat-option *ngFor="let city of citiesList " [value]="city">
                 {{city.enName | titlecase}}
               </mat-option>
@@ -36,7 +36,7 @@
           </mat-form-field>
           <mat-form-field *ngIf="citiesList$ | async as citiesList">
             <mat-label>Drop-off Cities List</mat-label>
-            <mat-select (selectionChange)="cityChanged($event.value)" formControlName="cityList">
+            <mat-select (selectionChange)="onCityChanged($event.value)" formControlName="cityList">
               <mat-option *ngFor="let city of citiesList " [value]="city">
                 {{city.enName | titlecase}}
               </mat-option>

@@ -8,3 +8,7 @@ export interface OrderDeliveryCity {
   enName: string;
   heName: string;
 }
+
+export interface SubmitResponse {
+  status: string;
+}
