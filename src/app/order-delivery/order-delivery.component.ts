@@ -26,6 +26,8 @@ import { getMapOptions } from './order-delivery.const';
 })
 export class OrderDeliveryComponent implements OnDestroy, OnInit {
   citiesList$ = this.orderDeliveryService.getCities();
+  token$ = this.store.select(token);
+
   deliveryForm = new FormGroup({
     name: new FormControl(),
     phoneNumber: new FormControl(
@@ -50,9 +52,9 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   subTotal = 0;
   dropOffCityPrice = '';
   cityPrice = '';
-
   googleMapsMap!: google.maps.Map;
-
+  cityMarker: google.maps.Marker | null = null;
+  dropOffCityMarker: google.maps.Marker | null = null;
   private destroySubject = new Subject<void>();
 
   constructor(
@@ -60,9 +62,6 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private store: Store
   ) {}
-
-  token$ = this.store.select(token);
-
   ngOnInit() {
     this.initMap();
   }
@@ -93,7 +92,6 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     this.token$
       .pipe(
         tap((token) => {
-          console.log(token);
           if (!this.selectedDate || !token) {
             return;
           }
@@ -107,7 +105,8 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
 
   onDropOffCityChanged(value: OrderDeliveryCity): void {
     this.dropOffCityPrice = value.price;
-    this.DisplayMarkerByCityName(value.enName);
+    this.dropOffCityMarker?.setMap(null);
+    this.DisplayMarkerByCityName(value.enName, true);
     if (this.dropOffCityPrice === this.cityPrice) {
       this.subTotal = +this.dropOffCityPrice;
     } else {
@@ -117,7 +116,8 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
 
   onCityChanged(value: OrderDeliveryCity): void {
     this.cityPrice = value.price;
-    this.DisplayMarkerByCityName(value.enName);
+    this.cityMarker?.setMap(null);
+    this.DisplayMarkerByCityName(value.enName, false);
     if (this.dropOffCityPrice === this.cityPrice) {
       this.subTotal = +this.cityPrice;
     } else {
@@ -159,7 +159,11 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
       );
     });
   }
-  private DisplayMarkerByCityName(cityName: string): void {
+
+  private DisplayMarkerByCityName(
+    cityName: string,
+    isDropOffCity: boolean
+  ): void {
     const geocoder = new google.maps.Geocoder();
     let location: OrderDeliveryLocation;
 
@@ -171,10 +175,47 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
         lat: results[0].geometry.location.lat(),
         lng: results[0].geometry.location.lng(),
       };
-      const marker = new google.maps.Marker({
-        position: location,
-      });
-      marker.setMap(this.googleMapsMap);
+
+      if (isDropOffCity) {
+        this.dropOffCityMarker = new google.maps.Marker({ position: location });
+        this.dropOffCityMarker?.setMap(this.googleMapsMap);
+      } else {
+        this.cityMarker = new google.maps.Marker({ position: location });
+        this.cityMarker?.setMap(this.googleMapsMap);
+      }
+      this.Route();
     });
   }
+
+  Route(): void {
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+
+    directionsRenderer.setMap(null);
+
+    if (
+      this.cityMarker?.getPosition() !== undefined &&
+      this.dropOffCityMarker?.getPosition() !== undefined
+    ) {
+      const request = {
+        origin: this.cityMarker?.getPosition() as google.maps.LatLng,
+        destination:
+          this.dropOffCityMarker?.getPosition() as google.maps.LatLng,
+        travelMode: google.maps.TravelMode.DRIVING,
+      };
+
+      directionsRenderer.setMap(this.googleMapsMap);
+
+      directionsService.route(request, (response, status) => {
+        if (status == 'OK') {
+          console.log(status, response);
+          directionsRenderer?.setDirections(response);
+        }
+      });
+    }
+  }
 }
+
+//:TODO:
+// delete route after new route
+//combine the onChange city drop to one func
