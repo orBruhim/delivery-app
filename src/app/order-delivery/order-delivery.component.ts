@@ -15,7 +15,6 @@ import {
 } from './order-delivery.model';
 import { Store } from '@ngrx/store';
 import { token } from '../login/store/login.selector';
-import { Loader } from '@googlemaps/js-api-loader';
 import { getMapOptions } from './order-delivery.const';
 
 @Component({
@@ -55,6 +54,8 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   googleMapsMap!: google.maps.Map;
   cityMarker: google.maps.Marker | null = null;
   dropOffCityMarker: google.maps.Marker | null = null;
+  private directionsService = new google.maps.DirectionsService();
+  private directionsRenderer = new google.maps.DirectionsRenderer();
   private destroySubject = new Subject<void>();
 
   constructor(
@@ -62,7 +63,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private store: Store
   ) {}
-  ngOnInit() {
+  ngOnInit(): void {
     this.initMap();
   }
 
@@ -70,7 +71,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     this.destroySubject.next();
   }
 
-  datesFilter = (date: Date | null): boolean => {
+  getDatesFilter = (date: Date | null): boolean => {
     this.getTimesForDatePicker();
     if (!date) {
       return false;
@@ -95,9 +96,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
           if (!this.selectedDate || !token) {
             return;
           }
-          this.orderDeliveryService
-            .submitForm(this.selectedDate, token)
-            .subscribe((data) => console.log(data));
+          this.orderDeliveryService.submitForm(this.selectedDate, token);
         })
       )
       .subscribe();
@@ -105,24 +104,12 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
 
   onDropOffCityChanged(value: OrderDeliveryCity): void {
     this.dropOffCityPrice = value.price;
-    this.dropOffCityMarker?.setMap(null);
     this.DisplayMarkerByCityName(value.enName, true);
-    if (this.dropOffCityPrice === this.cityPrice) {
-      this.subTotal = +this.dropOffCityPrice;
-    } else {
-      this.subTotal = +(+(this.dropOffCityPrice + this.cityPrice) + 10);
-    }
   }
 
   onCityChanged(value: OrderDeliveryCity): void {
     this.cityPrice = value.price;
-    this.cityMarker?.setMap(null);
     this.DisplayMarkerByCityName(value.enName, false);
-    if (this.dropOffCityPrice === this.cityPrice) {
-      this.subTotal = +this.cityPrice;
-    } else {
-      this.subTotal = +(+(this.dropOffCityPrice + this.cityPrice) + 10);
-    }
   }
 
   private getTimesForDatePicker(): void {
@@ -147,17 +134,10 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   }
 
   private initMap(): void {
-    const loader = new Loader({
-      apiKey: 'AIzaSyA5DZolXRvgGAEoBLdFmyOnfm0-e22ZErE',
-      version: 'weekly',
-    });
-
-    loader.load().then(() => {
-      this.googleMapsMap = new google.maps.Map(
-        document.getElementById('map') as HTMLElement,
-        getMapOptions()
-      );
-    });
+    this.googleMapsMap = new google.maps.Map(
+      document.getElementById('map') as HTMLElement,
+      getMapOptions()
+    );
   }
 
   private DisplayMarkerByCityName(
@@ -177,25 +157,37 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
       };
 
       if (isDropOffCity) {
+        this.dropOffCityMarker?.setMap(null);
+
         this.dropOffCityMarker = new google.maps.Marker({ position: location });
         this.dropOffCityMarker?.setMap(this.googleMapsMap);
+
+        if (this.dropOffCityPrice === this.cityPrice) {
+          this.subTotal = +this.dropOffCityPrice;
+        } else {
+          this.subTotal = +(+(this.dropOffCityPrice + this.cityPrice) + 10);
+        }
       } else {
+        this.cityMarker?.setMap(null);
         this.cityMarker = new google.maps.Marker({ position: location });
         this.cityMarker?.setMap(this.googleMapsMap);
+
+        if (this.dropOffCityPrice === this.cityPrice) {
+          this.subTotal = +this.cityPrice;
+        } else {
+          this.subTotal = +(+(this.dropOffCityPrice + this.cityPrice) + 10);
+        }
       }
-      this.Route();
+      this.createRoute();
     });
   }
 
-  Route(): void {
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
-
-    directionsRenderer.setMap(null);
+  private createRoute(): void {
+    this.directionsRenderer.setMap(null);
 
     if (
-      this.cityMarker?.getPosition() !== undefined &&
-      this.dropOffCityMarker?.getPosition() !== undefined
+      this.cityMarker?.getPosition() &&
+      this.dropOffCityMarker?.getPosition()
     ) {
       const request = {
         origin: this.cityMarker?.getPosition() as google.maps.LatLng,
@@ -204,12 +196,11 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
         travelMode: google.maps.TravelMode.DRIVING,
       };
 
-      directionsRenderer.setMap(this.googleMapsMap);
-
-      directionsService.route(request, (response, status) => {
+      this.directionsService.route(request, (response, status) => {
         if (status == 'OK') {
-          console.log(status, response);
-          directionsRenderer?.setDirections(response);
+          this.directionsRenderer.setMap(this.googleMapsMap);
+
+          this.directionsRenderer?.setDirections(response);
         }
       });
     }
@@ -217,5 +208,5 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
 }
 
 //:TODO:
-// delete route after new route
 //combine the onChange city drop to one func
+//submit

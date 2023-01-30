@@ -1,4 +1,4 @@
-export const getMapOptions = () => {
+export const getMapOptions = (): google.maps.MapOptions => {
   return {
     center: { lat: 32.0851, lng: 34.782 },
     zoom: 8,

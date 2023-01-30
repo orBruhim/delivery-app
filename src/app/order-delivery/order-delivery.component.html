@@ -56,7 +56,7 @@
         <div class="form-field-wrapper">
           <mat-form-field appearance="fill">
             <mat-label>Choose delivery date</mat-label>
-            <input matInput [matDatepickerFilter]="datesFilter" [matDatepicker]="picker"
+            <input matInput [matDatepickerFilter]="getDatesFilter" [matDatepicker]="picker"
                    (dateChange)="onDateSelected( $event)">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
