@@ -16,6 +16,7 @@ import {
 import { Store } from '@ngrx/store';
 import { token } from '../login/store/login.selector';
 import { getMapOptions } from './order-delivery.const';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'delivery-app-order-delivery',
@@ -28,20 +29,20 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   token$ = this.store.select(token);
 
   deliveryForm = new FormGroup({
-    name: new FormControl(),
-    phoneNumber: new FormControl(
-      '',
-      Validators.pattern(/05[023489]-?\\d{3}-?\\d{4}/)
-    ),
-    address: new FormControl(),
-    cityList: new FormControl(),
-    receiverName: new FormControl(),
-    receiverPhoneNumber: new FormControl(
-      '',
-      Validators.pattern('/05[023489]-?\\d{3}-?\\d{4}/')
-    ),
-    dropOffAddress: new FormControl(),
-    dropOffCityList: new FormControl(),
+    name: new FormControl('', Validators.required),
+    phoneNumber: new FormControl('', [
+      Validators.required,
+      // Validators.pattern(/05[023489]-?\\d{3}-?\\d{4}/),
+    ]),
+    address: new FormControl('', Validators.required),
+    cityList: new FormControl('', Validators.required),
+    receiverName: new FormControl('', Validators.required),
+    receiverPhoneNumber: new FormControl('', [
+      Validators.required,
+      // Validators.pattern('/05[023489]-?\\d{3}-?\\d{4}/'),
+    ]),
+    dropOffAddress: new FormControl('', Validators.required),
+    dropOffCityList: new FormControl('', Validators.required),
   });
 
   hours: string[] = [];
@@ -61,7 +62,8 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   constructor(
     private orderDeliveryService: OrderDeliveryService,
     private changeDetectorRef: ChangeDetectorRef,
-    private store: Store
+    private store: Store,
+    private _snackBar: MatSnackBar
   ) {}
   ngOnInit(): void {
     this.initMap();
@@ -97,6 +99,8 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
             return;
           }
           this.orderDeliveryService.submitForm(this.selectedDate, token);
+          this.deliveryForm.reset();
+          this.displaySuccessToast();
         })
       )
       .subscribe();
@@ -205,8 +209,13 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
       });
     }
   }
+
+  private displaySuccessToast(): void {
+    this._snackBar.open('Your order confirmed!', '', {
+      duration: 1500,
+    });
+  }
 }
 
 //:TODO:
-//combine the onChange city drop to one func
 //submit

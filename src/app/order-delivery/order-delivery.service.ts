@@ -33,8 +33,6 @@ export class OrderDeliveryService {
       date: selectedDate,
       token: token.token,
     };
-    console.log(token);
-    console.log(JSON.stringify(requestParams));
     return this.http.post<SubmitResponse>(
       'https://mock-stg.getpackage-dev.com/submit',
       JSON.stringify(requestParams)
