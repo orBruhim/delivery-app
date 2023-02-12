@@ -32,14 +32,14 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     name: new FormControl('', Validators.required),
     phoneNumber: new FormControl('', [
       Validators.required,
-      // Validators.pattern(/05[023489]-?\\d{3}-?\\d{4}/),
+      Validators.pattern(/^0?(([23489]{1}[0-9]{7})|[57]{1}[0-9]{8})+$/),
     ]),
     address: new FormControl('', Validators.required),
     cityList: new FormControl('', Validators.required),
     receiverName: new FormControl('', Validators.required),
     receiverPhoneNumber: new FormControl('', [
       Validators.required,
-      // Validators.pattern('/05[023489]-?\\d{3}-?\\d{4}/'),
+      Validators.pattern(/^0?(([23489]{1}[0-9]{7})|[57]{1}[0-9]{8})+$/),
     ]),
     dropOffAddress: new FormControl('', Validators.required),
     dropOffCityList: new FormControl('', Validators.required),
