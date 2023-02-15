@@ -7,6 +7,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { loginReducer } from './store/login.reducer';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -17,6 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatInputModule,
     MatButtonModule,
     HttpClientModule,
+    StoreModule.forFeature('login', loginReducer),
+    MatSnackBarModule,
   ],
 })
 export class LoginModule {}
