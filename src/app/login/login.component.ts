@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from './store/login.service';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
@@ -26,13 +26,6 @@ export class LoginComponent implements OnInit {
     private _snackBar: MatSnackBar,
     private router: Router
   ) {}
-
-  ngOnInit(): void {
-    const user = localStorage.getItem('user');
-    if (user) {
-      this.store.dispatch(login({ user: JSON.parse(user) }));
-    }
-  }
 
   login(): void {
     const { email, password } = this.loginForm.value;
@@ -49,12 +42,13 @@ export class LoginComponent implements OnInit {
       .login({ email, password })
       .pipe(
         tap((loginResponse) => {
-          if (!loginResponse.token) {
+          const { token } = loginResponse;
+          if (!token) {
             this.showPasswordErrorToast();
             return;
           }
           this.router.navigate(['/create']);
-          this.store.dispatch(login({ user }));
+          this.store.dispatch(login({ user, token: loginResponse }));
         })
       )
       .subscribe();

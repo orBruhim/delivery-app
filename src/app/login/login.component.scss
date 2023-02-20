@@ -1,11 +1,11 @@
-:host{
+:host {
   display: flex;
   align-items: center;
   width: 100%;
   height: 100%;
   justify-content: center;
 
-  .title{
+  .title {
     display: flex;
     justify-content: center;
     padding-bottom: 20px;
@@ -13,11 +13,12 @@
     font-weight: 800;
   }
 
-  .input-wrapper{
+  .input-wrapper {
     display: flex;
     flex-direction: column;
   }
-  .button-wrapper{
+
+  .button-wrapper {
     display: flex;
     justify-content: center;
   }

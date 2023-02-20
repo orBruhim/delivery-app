@@ -12,7 +12,7 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>Phone number</mat-label>
-            <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="phoneNumber">
+            <input placeholder="Ex. 0521111111" type="number" matInput formControlName="phoneNumber">
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
@@ -22,7 +22,7 @@
           </mat-form-field>
           <mat-form-field *ngIf="citiesList$ | async as citiesList">
             <mat-label> Pickup Cities List</mat-label>
-            <mat-select formControlName="dropOffCityList" (selectionChange)="dropOffCityChanged($event.value)">
+            <mat-select formControlName="cityList" (selectionChange)="onCityChanged($event.value)">
               <mat-option *ngFor="let city of citiesList " [value]="city">
                 {{city.enName | titlecase}}
               </mat-option>
@@ -36,7 +36,7 @@
           </mat-form-field>
           <mat-form-field *ngIf="citiesList$ | async as citiesList">
             <mat-label>Drop-off Cities List</mat-label>
-            <mat-select (selectionChange)="cityChanged($event.value)" formControlName="cityList">
+            <mat-select (selectionChange)="onDropOffCityChanged($event.value)" formControlName="dropOffCityList">
               <mat-option *ngFor="let city of citiesList " [value]="city">
                 {{city.enName | titlecase}}
               </mat-option>
@@ -50,13 +50,13 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>Receiver phone number</mat-label>
-            <input placeholder="Ex. 052-1111111" type="number" matInput formControlName="receiverPhoneNumber">
+            <input placeholder="Ex. 0521111111" type="number" matInput formControlName="receiverPhoneNumber">
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field appearance="fill">
             <mat-label>Choose delivery date</mat-label>
-            <input matInput [matDatepickerFilter]="datesFilter" [matDatepicker]="picker"
+            <input matInput [matDatepickerFilter]="getDatesFilter" [matDatepicker]="picker"
                    (dateChange)="onDateSelected( $event)">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
@@ -75,18 +75,23 @@
 
     </div>
   </div>
-  <div class="payment-wrapper">
-    <div class="payment-title">Sub Total:
-      <div>{{subTotal | currency}}</div>
+  <div class="right-side-wrapper">
+    <div class="payment-wrapper">
+      <div class="payment-title">Sub Total:
+        <div>{{subTotal | currency}}</div>
+      </div>
+      <div class="payment-title"> Vat:
+        <div>
+          {{(0.17 * subTotal).toFixed(2) | currency}}
+        </div>
+      </div>
+      <div class="payment-title total-price"> Total Price:
+        <div> {{(1.17 * subTotal).toFixed(2) | currency}}</div>
+      </div>
+      <button mat-raised-button color="primary" (click)="submit()">Pay</button>
     </div>
-    <div class="payment-title"> Vat:
-    <div>
-      {{(0.17 * subTotal).toFixed(2) | currency}}
+    <div class="google-maps-map-wrapper">
+      <div id="map"></div>
     </div>
-    </div>
-    <div class="payment-title total-price"> Total Price:
-    <div> {{(1.17 * subTotal).toFixed(2) | currency}}</div>
-    </div>
-    <button mat-raised-button color="primary" (click)="submit()">Pay</button>
   </div>
 </div>

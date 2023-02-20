@@ -6,7 +6,10 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "json-server": "json-server-auth db.json"
+    "json-server": "json-server-auth db.json",
+    "format:check:all": "prettier --check .",
+    "test:all": "nx run-many --all --target=test --parallel=true --maxParallel=3",
+    "lint:all": "nx run-many --all --target=lint --parallel=true --maxParallel=3"
   },
   "private": true,
   "dependencies": {
@@ -16,15 +19,19 @@
     "@angular/compiler": "~15.0.0",
     "@angular/core": "~15.0.0",
     "@angular/forms": "~15.0.0",
+    "@angular/google-maps": "^15.1.1",
     "@angular/material": "^15.0.3",
     "@angular/platform-browser": "~15.0.0",
     "@angular/platform-browser-dynamic": "~15.0.0",
     "@angular/router": "~15.0.0",
+    "@googlemaps/js-api-loader": "^1.15.1",
     "@ngrx/effects": "15.0",
     "@ngrx/entity": "15.0",
     "@ngrx/store": "15.0",
     "@ngrx/store-devtools": "15.0",
     "@nrwl/angular": "15.4.1",
+    "@types/google.maps": "^3.51.0",
+    "@types/googlemaps": "^3.43.3",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

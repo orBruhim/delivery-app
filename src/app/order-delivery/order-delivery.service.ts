@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { OrderDeliveryCity, OrderDeliveryTimes } from './order-delivery.model';
+import {
+  OrderDeliveryCity,
+  OrderDeliveryTimes,
+  SubmitResponse,
+} from './order-delivery.model';
+import { LoginResponse } from '../login/login.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -17,6 +22,20 @@ export class OrderDeliveryService {
   getCities(): Observable<OrderDeliveryCity[]> {
     return this.http.get<OrderDeliveryCity[]>(
       ' https://mock-stg.getpackage-dev.com/cities'
+    );
+  }
+
+  submitForm(
+    selectedDate: Date,
+    token: LoginResponse
+  ): Observable<SubmitResponse> {
+    const requestParams = {
+      date: selectedDate,
+      token: token.token,
+    };
+    return this.http.post<SubmitResponse>(
+      'https://mock-stg.getpackage-dev.com/submit',
+      JSON.stringify(requestParams)
     );
   }
 }
