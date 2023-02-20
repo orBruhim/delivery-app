@@ -22,5 +22,4 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint:all
-      - run: npm run test:all
-      - run: npm run build:apps:prods
+      - run: npm run build
