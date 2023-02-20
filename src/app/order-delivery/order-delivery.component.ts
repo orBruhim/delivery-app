@@ -65,6 +65,7 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     private store: Store,
     private _snackBar: MatSnackBar
   ) {}
+
   ngOnInit(): void {
     this.initMap();
   }
