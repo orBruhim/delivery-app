@@ -216,6 +216,3 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     });
   }
 }
-
-//:TODO:
-//submit
