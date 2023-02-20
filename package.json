@@ -6,7 +6,10 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "json-server": "json-server-auth db.json"
+    "json-server": "json-server-auth db.json",
+    "format:check:all": "prettier --check .",
+    "test:all": "nx run-many --all --target=test --parallel=true --maxParallel=3",
+    "lint:all": "nx run-many --all --target=lint --parallel=true --maxParallel=3"
   },
   "private": true,
   "dependencies": {
