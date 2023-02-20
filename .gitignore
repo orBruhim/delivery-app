@@ -7,7 +7,7 @@ tmp
 
 # dependencies
 node_modules
-./src/index.html
+/index.html
 
 # IDEs and editors
 /.idea
