@@ -17,6 +17,7 @@ import { Store } from '@ngrx/store';
 import { token } from '../login/store/login.selector';
 import { getMapOptions } from './order-delivery.const';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'delivery-app-order-delivery',
@@ -55,6 +56,8 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
   googleMapsMap!: google.maps.Map;
   cityMarker: google.maps.Marker | null = null;
   dropOffCityMarker: google.maps.Marker | null = null;
+
+  isHandSetPortrait = false;
   private directionsService = new google.maps.DirectionsService();
   private directionsRenderer = new google.maps.DirectionsRenderer();
   private destroySubject = new Subject<void>();
@@ -63,11 +66,13 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     private orderDeliveryService: OrderDeliveryService,
     private changeDetectorRef: ChangeDetectorRef,
     private store: Store,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private breakPointObserver: BreakpointObserver
   ) {}
 
   ngOnInit(): void {
     this.initMap();
+    this.adaptResponsiveDesign();
   }
 
   ngOnDestroy(): void {
@@ -215,5 +220,19 @@ export class OrderDeliveryComponent implements OnDestroy, OnInit {
     this._snackBar.open('Your order confirmed!', '', {
       duration: 1500,
     });
+  }
+
+  private adaptResponsiveDesign(): void {
+    this.breakPointObserver
+      .observe(Breakpoints.HandsetPortrait)
+      .pipe(
+        tap((res) => {
+          console.log(res);
+          this.isHandSetPortrait = res.matches;
+          this.changeDetectorRef.detectChanges();
+          console.log(this.isHandSetPortrait);
+        })
+      )
+      .subscribe();
   }
 }

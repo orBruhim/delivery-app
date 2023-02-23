@@ -1,11 +1,12 @@
-<div class="page-wrapper">
-  <div class="order-wrapper">
+<div class="page-wrapper"
+     [ngClass]="isHandSetPortrait ? 'hand-set-portrait' : 'desktop-set-portrait'">
+  <div class="order-wrapper" [ngClass]="isHandSetPortrait ? 'hand-set-portrait' :''">
     <div class="title-wrapper">
       <h2> Order Delivery </h2>
     </div>
     <div class="form-wrapper">
       <form [formGroup]="deliveryForm">
-        <div class="form-field-wrapper">
+        <div class="form-field-wrapper" [ngClass]="isHandSetPortrait ? 'form-field-wrapper-hand-set-portrait' : 'form-field-wrapper-desktop-set-portrait'">
           <mat-form-field>
             <mat-label> Name</mat-label>
             <input matInput formControlName="name">
